@@ -1,0 +1,7 @@
+Express.js
+Socket.io
+phonegap
+phonegap-plugin-local-notification
+
+Google MDL
+jQuery
