@@ -1,0 +1,32 @@
+{
+  "name": "weekenders",
+  "version": "1.0.0",
+  "dependencies": {
+    "ejs": "^2.5.6",
+    "express": "^4.15.2",
+    "morgan": "^1.8.1",
+    "mysql": "^2.13.0",
+    "socket.io": "^2.0.1",
+    "underscore": "^1.8.3"
+  },
+  "description": "Task management application",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/msumenge/weekenders.git"
+  },
+  "keywords": [
+    "weekenders"
+  ],
+  "author": "Maryo Sumenge",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/msumenge/weekenders/issues"
+  },
+  "homepage": "https://github.com/msumenge/weekenders#readme"
+}

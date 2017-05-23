@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Weekenders</title>
+	<!-- Socket.IO -->
+	<script src="js/socket.io.min.js"></script>
+	<!-- MDL -->
+	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+	<link rel="stylesheet" href="css/material.min.css" />
+	<script src="js/material.min.js"></script>
+	<!-- jQuery -->
+	<script src="js/jquery-3.1.1.min.js"></script>
+	<!-- Custom -->
+	<link rel="stylesheet" href="css/main.css" />
+	<script src="js/main.js"></script>
+</head>
+
+<body></body>
+<script>
+	$(document).ready(function () {
+		socket.emit('request.page', {page : 'settings'});
+	});
+</script>
+<!--script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAPx9fttBOJ9D2dZ2IW7J8BX8yVyGS-zgY&callback=initMap"></script-->
+
+</html>

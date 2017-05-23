@@ -1,0 +1,72 @@
+<dialog class="mdl-dialog">
+	<button class="mdl-button mdl-js-button mdl-button--icon dialog-close"> <i class="material-icons">close</i> </button>
+	<h4 class="mdl-dialog__title">File Upload</h4>
+	<div class="mdl-dialog__content">
+		<p>Please upload a valid weekend shedule in either XLXS or PDF file format.</p>
+	</div>
+	<div class="mdl-dialog__actions">
+		<button type="button" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">Upload</button>
+		<button type="button" class="mdl-button">Select file</button>
+	</div>
+</dialog>
+
+<div aria-live="assertive" aria-atomic="true" aria-relevant="text" class="mdl-snackbar mdl-js-snackbar">
+    <div class="mdl-snackbar__text"></div>
+    <button type="button" class="mdl-snackbar__action"></button>
+</div>
+
+<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header mdl-layout--fixed-tabs">
+	<header class="mdl-layout__header">
+		<div class="mdl-layout__header-row">
+		<span class="mdl-layout-title">Title</span> </div>
+		<div class="mdl-layout-spacer"></div>
+<% if(page == 'home') { %>
+		<div class="mdl-layout__tab-bar mdl-js-ripple-effect">
+			<a href="#fixed-tab-1" class="mdl-layout__tab is-active"><i class="material-icons">assignment</i></a>
+			<a href="#fixed-tab-2" class="mdl-layout__tab"><i class="material-icons">announcement</i></a>
+			<a href="#fixed-tab-3" class="mdl-layout__tab"><i class="material-icons">people</i></a>
+			<a href="#fixed-tab-4" class="mdl-layout__tab"><i class="material-icons">person_pin_circle</i></a>
+		</div>
+<% } %>
+	</header>
+	<div class="mdl-layout__drawer"> <span class="mdl-layout-title">Title</span> <img src="images/buggy-dark.png" style="height: auto; width: 80%; margin: 0px auto;">
+		<ul class="mdl-list drawer-list">
+			<li class="mdl-list__item" data-href="home">
+				<span class="mdl-list__item-primary-content">
+					<i class="material-icons mdl-list__item-icon">home</i> Home
+				</span>
+			</li>
+			<li class="mdl-list__item" id="upload-schedule">
+				<span class="mdl-list__item-primary-content">
+					<i class="material-icons mdl-list__item-icon">file_upload</i> Upload Schedule
+				</span>
+			</li>
+			<li class="mdl-list__item" data-href="settings">
+				<span class="mdl-list__item-primary-content">
+					<i class="material-icons mdl-list__item-icon">settings</i> Settings
+				</span>
+			</li>
+			<li class="mdl-list__item">
+				<span class="mdl-list__item-primary-content">
+					<i class="material-icons mdl-list__item-icon">bug_report</i> Report Bugs
+				</span>
+			</li>
+			<li class="mdl-list__item">
+				<span class="mdl-list__item-primary-content">
+					<i class="material-icons mdl-list__item-icon">feedback</i> Give Feedback
+				</span>
+			</li>
+			<li class="mdl-list__item">
+				<span class="mdl-list__item-primary-content">
+					<i class="material-icons mdl-list__item-icon">person</i> Contact Developer
+				</span>
+			</li>
+		</ul>
+	</div>
+	
+	<main class="mdl-layout__content">
+		
+		<%- include(page) %>
+
+	</main>
+</div>
