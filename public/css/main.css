@@ -4,8 +4,12 @@
 }
 
 /* Utilities */
-.text-center { text-align: center; }
-.text-right { text-align: right; }
+.align-center { text-align: center; }
+.align-right { text-align: right; }
+.fullwidth { width: 100%; }
+.fullheight { height: 100%; }
+.padding-0 { padding: 0px; }
+.margin-0 { margin: 0px; }
 
 
 /* MDL Overwrite */
@@ -137,7 +141,7 @@ td {
 	margin: 0px;
 }
 
-.settings-list i.material-icons {
+.settings-list .mdl-list__item-primary-content i.material-icons {
 	margin-right: 15px;
 	color: #3f51b5;
 }
@@ -154,4 +158,19 @@ td {
 	position: absolute;
 	top: 10px;
 	right: 10px;
+}
+
+.settings-user-icon {
+	height: 50px;
+	width: 50px;
+}
+
+.settings-user-icon i.material-icons {
+	font-size: 1.4em;
+	color: rgba(0,0,0,.26);
+	margin: 0px 0px 0px -4px;
+}
+
+.settings-user-icon.mdl-button--colored i.material-icons {
+	color: #3f51b5;
 }

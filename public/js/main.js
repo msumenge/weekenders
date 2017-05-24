@@ -19,6 +19,9 @@ var app = {
 
 		this.$settings = $('.settings-list');
 		this.$settings.on('change', '#settings-user-join, #settings-user-name, #settings-user-phone, #settings-user-email, #settings-user-location', this.updateUserSettings);
+
+		this.$settingsIcon = this.$settings.find('.settings-user-icon');
+		this.$settingsIcon.on('click', this.updateUserSettings);
 	},
 
 	init: function () {
@@ -115,6 +118,9 @@ var app = {
 
 		var data = {};
 
+		if(e.type == 'click')
+			input = 'icon';
+
 		switch(input) {
 			case 'join':
 
@@ -159,7 +165,7 @@ var app = {
 					}
 				);
 
-			break;
+				break;
 
 			case 'location':
 
@@ -174,7 +180,25 @@ var app = {
 					}
 				);
 
-			break;
+				break;
+
+			case 'icon':
+
+				data.picture = $(this).data('icon');
+
+				socket.emit(
+					'request.user',
+					{
+						type : 'set',
+						id : storage.get('userId'),
+						data : data
+					}
+				);
+
+				$('.settings-user-icon.mdl-button--colored').removeClass('mdl-button--colored');
+				$(this).addClass('mdl-button--colored');
+
+				break;
 		}
 
 	},
@@ -193,6 +217,8 @@ var app = {
 
 		});
 
+		this.$settings.find('.settings-user-icon').prop('disabled', false);
+
 	},
 
 	disableSettingsInput : function () {
@@ -209,6 +235,8 @@ var app = {
 			$(this).closest('.mdl-switch').addClass('is-disabled').removeClass('is-checked');
 
 		});
+
+		this.$settings.find('.settings-user-icon').prop('disabled', true);
 
 	}
 }
@@ -279,30 +307,44 @@ socket.on('respose.user', function (data) {
 
 		case 'get':
 			
-			var inputs = ['name', 'phone', 'email', 'location'];
+			var inputs = ['name', 'phone', 'email', 'location_service', 'picture'];
 			var user = data.user;
 
 			for (var i in inputs) {
 
-				if (user[inputs[i]] == null || user[inputs[i]] == undefined || user[inputs[i]] == '') return;
+				if (user[inputs[i]] == null || user[inputs[i]] == undefined || user[inputs[i]] == '') continue;
 
-				var input = app.$settings.find('#settings-user-' + inputs[i]);
+				switch (inputs[i]) {
+					case 'location_service':
 
-				if(inputs[i] == 'location') {
+						if (user[inputs[i]] == 1) {
 
-					if (user['location_service'] == 1) {
+							app.$settings.find('#settings-user-location').prop('checked', true).each(function() {
+								$(this).closest('.mdl-switch').addClass('is-checked');
+							});
 
-						input.prop('checked', true).each(function() {
-							$(this).closest('.mdl-switch').addClass('is-checked');
+						}
+
+					break;
+					case 'picture':
+
+						app.$settings.find('.settings-user-icon').each(function() {
+
+							if($(this).data('icon') == user.picture) {
+
+								$(this).addClass('mdl-button--colored');
+
+							}
+
 						});
 
-					}
+					break;
+					default:
 
-				} else {
+						var input = app.$settings.find('#settings-user-' + inputs[i]);
 
-					input.val(user[inputs[i]]);
-					input.closest('.mdl-textfield').addClass('is-dirty');
-
+						input.val(user[inputs[i]]);
+						input.closest('.mdl-textfield').addClass('is-dirty');
 				}
 
 			}
