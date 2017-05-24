@@ -26,7 +26,7 @@ module.exports = {
 	get: (id = '*', callback) => {
 
 		let q = 'SELECT * FROM user';
-		let data = {}
+		let data = {};
 
 		if(id != '*') {
 			q += ' WHERE ?';

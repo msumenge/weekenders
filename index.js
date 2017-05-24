@@ -98,6 +98,22 @@ io.on('connection', function (socket) {
 					socket.emit('respose.user', {type : 'del', isDeleted : isDeleted});
 				});
 				break;
+
+			case 'all':
+
+				user.get('*', res => {
+
+					for(var row in res) {
+
+						delete res[row]['socket_id'];
+						delete res[row]['auth_level'];
+						delete res[row]['geolocation'];
+
+					}
+
+					socket.emit('respose.user', {type : 'all', users : res});
+				});
+				break;
 		}
 
 		

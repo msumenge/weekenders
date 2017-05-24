@@ -8,6 +8,9 @@ var app = {
 		this.$tab3 = $('#fixed-tab-3');
 		this.$tab4 = $('#fixed-tab-4');
 
+		this.$homeTabs.on('click', 'a[href="#fixed-tab-3"]', this.getAllUsers);
+
+
 		this.$singleSelectOptionsTrigger = $('.single-select-options-trigger');
 		this.$singleSelectOptionsTrigger.on('click', this.toggleSingleSelectOptionsTrigger.bind(this));
 		
@@ -47,11 +50,57 @@ var app = {
 		}
 	},
 
-	render : function (data) {
+	renderPage : function (data) {
 
 		$('body').html(data.content);
 		componentHandler.upgradeDom();
 		this.init();
+
+	},
+
+	renderTab : function (data) {
+
+		switch(data.tab) {
+			case 1: break;
+			case 2: break;
+			case 3:
+
+				var html = '';
+				var currentUser = storage.get('userId');
+
+				for(var nth in data.users) {
+
+					if(data.users[nth]['id'] == currentUser) continue;
+
+					var email = '';
+					var isTwoLine = '';
+					if(!isEmpty(data.users[nth]['email'])) {
+						email = '<span class="mdl-list__item-sub-title">' + data.users[nth]['email'] + '</span>';
+						isTwoLine = ' mdl-list__item--two-line';
+					}
+
+					var phone = '';
+					if(!isEmpty(data.users[nth]['phone'])) {
+						phone = '<a class="mdl-list__item-secondary-action" href="tel:' + data.users[nth]['phone'] + '"><i class="material-icons">phone</i></a>';
+					}
+
+					var name = 'Anonymous';
+					if(!isEmpty(data.users[nth]['name'])) {
+						name = data.users[nth]['name'];
+					}
+
+					var icon = data.users[nth]['picture'];
+
+					html += '<div class="mdl-list__item' + isTwoLine+ '"><span class="mdl-list__item-primary-content"><i class="material-icons mdl-list__item-avatar">' + icon + '</i><span>' + name + '</span>' + email + '</span>' + phone + '</div>';
+
+				}
+
+				$('#fixed-tab-3').find('.users-list').html(html);
+
+				break;
+			case 4: break;
+
+		}
 
 	},
 
@@ -238,7 +287,14 @@ var app = {
 
 		this.$settings.find('.settings-user-icon').prop('disabled', true);
 
+	},
+
+	getAllUsers : function () {
+
+		socket.emit('request.user', {type : 'all'});
+
 	}
+
 }
 
 // #####################################################################
@@ -292,7 +348,7 @@ socket.on('topic', function (data) {
 */
 
 socket.on('respose.page', function (data) {
-	app.render(data);
+	app.renderPage(data);
 });
 
 socket.on('respose.user', function (data) {
@@ -312,7 +368,7 @@ socket.on('respose.user', function (data) {
 
 			for (var i in inputs) {
 
-				if (user[inputs[i]] == null || user[inputs[i]] == undefined || user[inputs[i]] == '') continue;
+				if (isEmpty(user[inputs[i]])) continue;
 
 				switch (inputs[i]) {
 					case 'location_service':
@@ -374,6 +430,13 @@ socket.on('respose.user', function (data) {
 			}
 
 			break;
+
+		case 'all':
+
+			data.tab = 3;
+			app.renderTab(data);
+
+			break;
 	}
 
 });
@@ -393,6 +456,41 @@ var storage = {
 		key == '*' ? window.localStorage.clear() : window.localStorage.removeItem(key);
 	}
 };
+
+// #####################################################################
+// HELPER
+// #####################################################################
+
+function isEmpty (variable, checkAll = false) {
+
+	var isEmpty = false;
+
+	if(variable === null && typeof variable === "object") {
+		isEmpty = true;
+	}
+
+	if(variable === "" && typeof variable === "string") {
+		isEmpty = true;
+	}
+
+	if(variable === undefined && typeof variable === "undefined") {
+		isEmpty = true;
+	}
+
+	if(variable === 0 && typeof variable === "number") {
+		isEmpty = true;
+	}
+
+	if(variable === false && typeof variable === "boolean" && checkAll) {
+		isEmpty = true;
+	}
+
+	if(!parseFloat(variable) && variable != 0 && typeof variable === "number" && checkAll) {
+		isEmpty = true;
+	}
+
+	return isEmpty;
+}
 
 // #####################################################################
 // DEV
