@@ -1,36 +1,47 @@
 var app = {
 	eventBind: function () {
-		this.$title = $('.mdl-layout-title');
-		this.$body = $('.mdl-layout__content');
-		this.$homeTabs = $('.mdl-layout__tab-bar-container');
-		this.$tab1 = $('#fixed-tab-1');
-		this.$tab2 = $('#fixed-tab-2');
-		this.$tab3 = $('#fixed-tab-3');
-		this.$tab4 = $('#fixed-tab-4');
+		this.title = $('.mdl-layout-title');
+		this.body = $('.mdl-layout__content');
+		this.homeTabs = $('.mdl-layout__tab-bar-container');
+		this.tab1 = $('#fixed-tab-1');
+		this.tab2 = $('#fixed-tab-2');
+		this.tab3 = $('#fixed-tab-3');
+		this.tab4 = $('#fixed-tab-4');
 
-		this.$homeTabs.on('click', 'a[href="#fixed-tab-3"]', this.getAllUsers);
+		this.homeTabs.on('click', 'a[href="#fixed-tab-2"]', this.getAllPosts);
+		this.homeTabs.on('click', 'a[href="#fixed-tab-3"]', this.getAllUsers);
 
-
-		this.$singleSelectOptionsTrigger = $('.single-select-options-trigger');
-		this.$singleSelectOptionsTrigger.on('click', this.toggleSingleSelectOptionsTrigger.bind(this));
+		this.singleSelectOptionsTrigger = $('.single-select-options-trigger');
+		this.singleSelectOptionsTrigger.on('click', this.toggleSingleSelectOptionsTrigger.bind(this));
 		
-		this.$filter = $('input[name="filter"]');
-		this.$filter.on('change', this.filterList.bind(this));
+		this.filter = $('input[name="filter"]');
+		this.filter.on('change', this.filterList.bind(this));
 
-		this.$href = $('[data-href]');
-		this.$href.on('click', this.requestPage);
+		this.href = $('[data-href]');
+		this.href.on('click', this.requestPage);
 
-		this.$settings = $('.settings-list');
-		this.$settings.on('change', '#settings-user-join, #settings-user-name, #settings-user-phone, #settings-user-email, #settings-user-location', this.updateUserSettings);
+		this.settings = $('.settings-list');
+		this.settings.on('change', '#settings-user-join, #settings-user-name, #settings-user-phone, #settings-user-email, #settings-user-location', this.updateUserSettings);
 
-		this.$settingsIcon = this.$settings.find('.settings-user-icon');
-		this.$settingsIcon.on('click', this.updateUserSettings);
+		this.settingsIcon = this.settings.find('.settings-user-icon');
+		this.settingsIcon.on('click', this.updateUserSettings);
+
+		this.postcard = $('#card-postcard');
+		this.postcard.on('focusin', 'textarea', function() { $(this).attr('rows', '5'); });
+		this.postcard.on('focusout', 'textarea', function() { $(this).attr('rows', '1'); });
+		this.postcard.on('keyup', 'textarea', this.updatePostcardUI);
+		this.postcard.on('click', '.mdl-card__menu button', function() { $('#postcard-file-input').click(); });
+		this.postcard.on('click', '.mdl-card__actions button:last-child', this.discardPostcard);
+		this.postcard.on('click', '.mdl-card__actions button:first-child', this.submitPostcard);
+
+		this.postcardFileInput = $('#postcard-file-input');
+		this.postcardFileInput.on('change', this.showSelectedImage);
 	},
 
 	init: function () {
 		this.eventBind();
 		this.initFileUploadDialog();
-		this.$title.text('Weekenders');
+		this.title.text('Weekenders');
 
 		if (storage.get('userId') == null || storage.get('userId') == '') {
 		
@@ -39,7 +50,7 @@ var app = {
 		}
 		else {
 
-			this.$settings.find('#settings-user-join').prop('checked', true).each(function() {
+			this.settings.find('#settings-user-join').prop('checked', true).each(function() {
 				$(this).closest('.mdl-switch').removeClass('is-disabled').addClass('is-checked');
 			});
 
@@ -62,7 +73,11 @@ var app = {
 
 		switch(data.tab) {
 			case 1: break;
-			case 2: break;
+			case 2:
+
+				isEmpty(storage.get('userId')) ? app.postcard.parent().hide() : null;
+
+				break;
 			case 3:
 
 				var html = '';
@@ -254,44 +269,125 @@ var app = {
 
 	enableSettingsInput : function () {
 
-		this.$settings.find('#settings-user-name, #settings-user-phone, #settings-user-email').prop('disabled', false).each(function() {
+		this.settings.find('#settings-user-name, #settings-user-phone, #settings-user-email').prop('disabled', false).each(function() {
 
 			$(this).closest('.mdl-textfield').removeClass('is-disabled');
 
 		});
 
-		this.$settings.find('#settings-user-location').prop('disabled', false).each(function() {
+		this.settings.find('#settings-user-location').prop('disabled', false).each(function() {
 
 			$(this).closest('.mdl-switch').removeClass('is-disabled');
 
 		});
 
-		this.$settings.find('.settings-user-icon').prop('disabled', false);
+		this.settings.find('.settings-user-icon').prop('disabled', false);
 
 	},
 
 	disableSettingsInput : function () {
 
-		this.$settings.find('#settings-user-name, #settings-user-phone, #settings-user-email').prop('disabled', true).each(function() {
+		this.settings.find('#settings-user-name, #settings-user-phone, #settings-user-email').prop('disabled', true).each(function() {
 
 			$(this).closest('.mdl-textfield').addClass('is-disabled').removeClass('is-dirty is-focused');
 			$(this).val('');
 
 		});
 
-		this.$settings.find('#settings-user-location').prop('disabled', true).prop('checked', false).each(function() {
+		this.settings.find('#settings-user-location').prop('disabled', true).prop('checked', false).each(function() {
 
 			$(this).closest('.mdl-switch').addClass('is-disabled').removeClass('is-checked');
 
 		});
 
-		this.$settings.find('.settings-user-icon').prop('disabled', true);
+		this.settings.find('.settings-user-icon').prop('disabled', true);
 
 	},
 
 	getAllUsers : function () {
 
 		socket.emit('request.user', {type : 'all'});
+
+	},
+
+	getAllPosts : function () {
+
+		socket.emit('request.user', {type : 'all'});
+
+		app.renderTab({tab : 2});
+
+	},
+
+	showSelectedImage : function () {
+
+		var input = this;
+
+		//log(isEmpty($(this).val()) ? true : false);
+
+		if (input.files && input.files[0]) {
+			var reader = new FileReader();
+
+			reader.onload = function (e) {
+				app.postcard.find('.mdl-card__title').css('background-image', 'url('+e.target.result+')');
+			}
+
+			reader.readAsDataURL(input.files[0]);
+		}
+		else {
+			app.postcard.find('.mdl-card__title').css('background-image', '');
+		}
+
+		app.updatePostcardUI();
+
+	},
+
+	updatePostcardUI : function () {
+
+		app.postcard
+			.find('.mdl-card__actions button')
+			.prop(
+				'disabled',
+				isEmpty(app.postcardFileInput.val()) && isEmpty(app.postcard.find('textarea').val()) ? true : false
+			);
+
+	},
+
+	discardPostcard : function () {
+
+		app.postcardFileInput.val('');
+		app.postcard.find('textarea').val('');
+		app.postcard.find('.mdl-card__title').css('background-image', '');
+
+		app.updatePostcardUI();
+
+	},
+
+	submitPostcard : function () {
+		var data = {
+			userId : '',
+			text : '',
+			image : ''
+		};
+
+		if(isEmpty(storage.get('userId'))) {
+			// fail
+			return;
+		} else {
+			data.userId = storage.get('userId');
+		}
+
+		if(!isEmpty(app.postcard.find('textarea').val())) {
+			data.text = storage.get('userId');
+		}
+
+		var input = $('#postcard-file-input');
+		if (input.files && input.files[0]) {
+			log('file selected');
+		} else {
+			log('no file');
+		}
+
+		log(data);
 
 	}
 
@@ -375,7 +471,7 @@ socket.on('respose.user', function (data) {
 
 						if (user[inputs[i]] == 1) {
 
-							app.$settings.find('#settings-user-location').prop('checked', true).each(function() {
+							app.settings.find('#settings-user-location').prop('checked', true).each(function() {
 								$(this).closest('.mdl-switch').addClass('is-checked');
 							});
 
@@ -384,7 +480,7 @@ socket.on('respose.user', function (data) {
 					break;
 					case 'picture':
 
-						app.$settings.find('.settings-user-icon').each(function() {
+						app.settings.find('.settings-user-icon').each(function() {
 
 							if($(this).data('icon') == user.picture) {
 
@@ -397,7 +493,7 @@ socket.on('respose.user', function (data) {
 					break;
 					default:
 
-						var input = app.$settings.find('#settings-user-' + inputs[i]);
+						var input = app.settings.find('#settings-user-' + inputs[i]);
 
 						input.val(user[inputs[i]]);
 						input.closest('.mdl-textfield').addClass('is-dirty');

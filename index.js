@@ -5,10 +5,12 @@ var app			= express();
 var fs			= require("fs");
 var server 		= require('http').Server(app);
 var io			= require('socket.io').listen(server);
+var ss			= require('socket.io-stream');
 var morgan		= require('morgan');
 var mysql		= require('mysql');
 var _ 			= require('underscore');
 var ejs			= require('ejs');
+var path		= require('path');
 
 var db			= require('./functions/db.js');
 var user		= require('./functions/user.js');
@@ -116,8 +118,17 @@ io.on('connection', function (socket) {
 				break;
 		}
 
-		
+	});
 
+	socket.on('request.post', () => {
+
+		//socket.emit('respose.user', {type : 'all', users : res});
+
+	});
+
+	ss(socket).on('postcard', function(stream, data) {
+		var filename = path.basename(data.name);
+		stream.pipe(fs.createWriteStream(filename));
 	});
 
 });
