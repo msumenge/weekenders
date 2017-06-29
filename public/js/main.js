@@ -31,8 +31,8 @@ var app = {
 		this.postcard.on('focusout', 'textarea', function() { $(this).attr('rows', '1'); });
 		this.postcard.on('keyup', 'textarea', this.updatePostcardUI);
 		this.postcard.on('click', '.mdl-card__menu button', function() { $('#postcard-file-input').click(); });
-		this.postcard.on('click', '.mdl-card__actions button:last-child', this.discardPostcard);
 		this.postcard.on('click', '.mdl-card__actions button:first-child', this.submitPostcard);
+		this.postcard.on('click', '.mdl-card__actions button:last-child', this.discardPostcard);
 
 		this.postcardFileInput = $('#postcard-file-input');
 		this.postcardFileInput.on('change', this.showSelectedImage);
